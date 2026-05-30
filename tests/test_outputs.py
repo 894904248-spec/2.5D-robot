@@ -18,6 +18,9 @@ def test_metrics_as_dict() -> None:
         unreachable_targets=2,
         path_length=12,
         turn_count=3,
+        total_cost=14.5,
+        high_cost_cells_entered=2,
+        cautious_cells_entered=1,
     )
 
     assert metrics.as_dict() == {
@@ -30,6 +33,9 @@ def test_metrics_as_dict() -> None:
         "unreachable_targets": 2,
         "path_length": 12,
         "turn_count": 3,
+        "total_cost": 14.5,
+        "high_cost_cells_entered": 2,
+        "cautious_cells_entered": 1,
     }
 
 
@@ -60,3 +66,6 @@ def test_path_log_contains_expected_columns(tmp_path: Path) -> None:
     assert first_row["step"] == "0"
     assert first_row["action"] == "start"
     assert "coverage_rate" in first_row
+    assert "step_cost" in first_row
+    assert "cumulative_cost" in first_row
+    assert "planner_mode" in first_row

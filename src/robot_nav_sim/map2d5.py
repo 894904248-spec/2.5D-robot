@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Iterable
 
 CellPos = tuple[int, int]
+PlannerMode = str
 
 BLOCKED_SEMANTICS = {"wall", "hard_obstacle", "pit", "too_high", "too_steep"}
 SOFT_COSTS = {
@@ -16,6 +17,7 @@ SOFT_COSTS = {
     "curtain_soft": 2.0,
     "unknown": 3.0,
 }
+BASELINE_STEP_COST = 1.0
 MAX_HEIGHT = 2.5
 MAX_SLOPE = 20.0
 MAX_ROUGHNESS = 0.4
@@ -133,9 +135,21 @@ class GridMap2D5:
             and grid_cell.roughness <= MAX_ROUGHNESS
         )
 
-    def cost(self, cell: CellPos) -> float:
+    def traversability_class(self, cell: CellPos) -> str:
+        if not self.is_traversable(cell):
+            return "blocked"
+        grid_cell = self.cell(*cell)
+        if grid_cell.traversability_cost > 1.5:
+            return "cautious"
+        return "free"
+
+    def cost(self, cell: CellPos, planner_mode: PlannerMode = "cost_2d5") -> float:
         if not self.is_traversable(cell):
             return float("inf")
+        if planner_mode == "baseline_2d":
+            return BASELINE_STEP_COST
+        if planner_mode != "cost_2d5":
+            raise ValueError(f"unknown planner_mode: {planner_mode}")
         grid_cell = self.cell(*cell)
         return float(grid_cell.traversability_cost or SOFT_COSTS.get(grid_cell.semantic, 1.0))
 

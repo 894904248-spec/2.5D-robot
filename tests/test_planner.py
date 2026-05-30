@@ -62,3 +62,30 @@ def test_astar_start_equals_goal() -> None:
     planner = AStarPlanner(grid)
 
     assert planner.plan(grid.start, grid.start) == [grid.start]
+
+
+def test_cost_2d5_prefers_lower_cost_route() -> None:
+    grid = load_map("cost_choice_room.json")
+    start = grid.start
+    goal = (10, 3)
+    baseline_path = AStarPlanner(grid, planner_mode="baseline_2d").plan(start, goal)
+    cost_path = AStarPlanner(grid, planner_mode="cost_2d5").plan(start, goal)
+
+    baseline_high_cost = sum(1 for cell in baseline_path if grid.cost(cell, "cost_2d5") > 1.0)
+    cost_high_cost = sum(1 for cell in cost_path if grid.cost(cell, "cost_2d5") > 1.0)
+    baseline_total = sum(grid.cost(cell, "cost_2d5") for cell in baseline_path[1:])
+    cost_total = sum(grid.cost(cell, "cost_2d5") for cell in cost_path[1:])
+
+    assert baseline_path
+    assert cost_path
+    assert len(baseline_path) < len(cost_path)
+    assert baseline_high_cost > cost_high_cost
+    assert cost_total < baseline_total
+
+
+def test_high_cost_cells_are_traversable() -> None:
+    grid = load_map("cost_choice_room.json")
+
+    assert grid.is_traversable((2, 3))
+    assert grid.cost((2, 3), "cost_2d5") > 1.0
+    assert grid.traversability_class((2, 3)) == "cautious"

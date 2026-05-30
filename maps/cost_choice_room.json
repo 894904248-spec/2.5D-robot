@@ -1,0 +1,14 @@
+{
+  "name": "cost_choice_room",
+  "width": 12,
+  "height": 7,
+  "start": [1, 3],
+  "features": [
+    {"type": "wall", "rect": [0, 0, 12, 1]},
+    {"type": "wall", "rect": [0, 6, 12, 1]},
+    {"type": "wall", "rect": [0, 0, 1, 7]},
+    {"type": "wall", "rect": [11, 0, 1, 7]},
+    {"type": "carpet", "rect": [2, 3, 8, 1], "traversability_cost": 5.0, "roughness": 0.2},
+    {"type": "low_bump", "rect": [5, 2, 1, 1], "traversability_cost": 2.0, "height": 0.2}
+  ]
+}

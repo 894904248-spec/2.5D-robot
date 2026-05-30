@@ -14,6 +14,9 @@ class SimulationMetrics:
     unreachable_targets: int = 0
     path_length: int = 0
     turn_count: int = 0
+    total_cost: float = 0.0
+    high_cost_cells_entered: int = 0
+    cautious_cells_entered: int = 0
 
     def as_dict(self) -> dict[str, float | int]:
         return {
@@ -26,4 +29,7 @@ class SimulationMetrics:
             "unreachable_targets": self.unreachable_targets,
             "path_length": self.path_length,
             "turn_count": self.turn_count,
+            "total_cost": self.total_cost,
+            "high_cost_cells_entered": self.high_cost_cells_entered,
+            "cautious_cells_entered": self.cautious_cells_entered,
         }

@@ -20,8 +20,8 @@ from .map2d5 import BLOCKED_SEMANTICS, CellPos, GridMap2D5
 SEMANTIC_VALUES = {
     "floor": 0,
     "carpet": 1,
-    "low_bump": 2,
-    "curtain_soft": 3,
+    "low_bump": 1,
+    "curtain_soft": 1,
     "unknown": 4,
 }
 
@@ -45,7 +45,7 @@ def save_final_map(
             else:
                 data[y, x] = SEMANTIC_VALUES.get(cell.semantic, 4)
 
-    colors = ["#f7f7f2", "#d7bd82", "#b9d99c", "#9bd7d5", "#c8c8c8", "#242424"]
+    colors = ["#f7f7f2", "#d7bd82", "#d7bd82", "#d7bd82", "#c8c8c8", "#242424"]
     cmap = ListedColormap(colors)
     fig, ax = plt.subplots(figsize=(10, 7))
     ax.imshow(data, cmap=cmap, origin="upper", vmin=0, vmax=5)
@@ -72,8 +72,7 @@ def save_final_map(
     legend_items = [
         Patch(facecolor=colors[5], label="obstacle / blocked"),
         Patch(facecolor=colors[0], label="normal floor"),
-        Patch(facecolor=colors[1], label="carpet / high-cost area"),
-        Patch(facecolor=colors[2], label="low-bump / cautious area"),
+        Patch(facecolor=colors[1], label="cautious / high-cost cells"),
         Line2D([0], [0], color="#d64045", lw=1.5, label="path"),
         Line2D([0], [0], marker="o", color="w", markerfacecolor="#2f9e44", markersize=8, label="start"),
         Line2D([0], [0], marker="o", color="w", markerfacecolor="#f08c00", markersize=8, label="end"),

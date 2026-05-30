@@ -32,14 +32,20 @@ class Simulator:
         "roughness",
         "traversability_class",
         "cost",
+        "step_cost",
+        "cumulative_cost",
+        "planner_mode",
         "coverage_rate",
         "recovery_id",
         "reason",
     ]
 
-    def __init__(self, grid: GridMap2D5, max_steps: int | None = None):
+    def __init__(self, grid: GridMap2D5, max_steps: int | None = None, planner_mode: str = "baseline_2d"):
+        if planner_mode not in {"baseline_2d", "cost_2d5"}:
+            raise ValueError(f"unknown planner_mode: {planner_mode}")
         self.grid = grid
-        self.planner = AStarPlanner(grid)
+        self.planner_mode = planner_mode
+        self.planner = AStarPlanner(grid, planner_mode=planner_mode)
         self.robot = Robot(grid.start)
         self.reachable = grid.reachable_cells(grid.start)
         self.metrics = SimulationMetrics(total_reachable_cells=len(self.reachable))
@@ -52,7 +58,7 @@ class Simulator:
         self._serpentine_rank = {
             pos: index for index, pos in enumerate(self.grid.serpentine_cells(self.reachable))
         }
-        self._log("start", reason="initial_position")
+        self._log("start", step_cost=0.0, reason="initial_position")
         self._update_branch_candidates(self.robot.position)
 
     def run(self) -> SimulationResult:
@@ -115,11 +121,14 @@ class Simulator:
                 self.metrics.collision_count += 1
                 return False
             self._record_turn(next_cell)
+            step_cost = self.grid.cost(next_cell, self.planner_mode)
             self.robot.record_safe_step(next_cell)
             self.metrics.steps += 1
             self.metrics.path_length += 1
+            self.metrics.total_cost += step_cost
+            self._record_cost_class(next_cell)
             self._update_branch_candidates(next_cell)
-            self._log(action, reason=reason)
+            self._log(action, step_cost=step_cost, reason=reason)
         return True
 
     def _record_turn(self, next_cell: CellPos) -> None:
@@ -138,7 +147,10 @@ class Simulator:
         ]
         if not candidates:
             return None
-        return min(candidates, key=lambda pos: (self._serpentine_rank.get(pos, 10**9), self.grid.cost(pos)))
+        return min(
+            candidates,
+            key=lambda pos: (self._serpentine_rank.get(pos, 10**9), self.grid.cost(pos, self.planner_mode)),
+        )
 
     def _update_branch_candidates(self, cell: CellPos) -> None:
         candidates = {
@@ -190,7 +202,7 @@ class Simulator:
                 return target
         return None
 
-    def _log(self, action: str, reason: str = "") -> None:
+    def _log(self, action: str, step_cost: float | str = "", reason: str = "") -> None:
         grid_cell = self.grid.cell(*self.robot.position)
         reachable_visited = len(self.robot.visited & self.reachable)
         coverage = reachable_visited / len(self.reachable) if self.reachable else 1.0
@@ -208,8 +220,11 @@ class Simulator:
                 "height": grid_cell.height,
                 "slope": grid_cell.slope,
                 "roughness": grid_cell.roughness,
-                "traversability_class": self._traversability_class(self.robot.position),
-                "cost": self.grid.cost(self.robot.position),
+                "traversability_class": self.grid.traversability_class(self.robot.position),
+                "cost": self.grid.cost(self.robot.position, "cost_2d5"),
+                "step_cost": step_cost,
+                "cumulative_cost": self.metrics.total_cost,
+                "planner_mode": self.planner_mode,
                 "coverage_rate": coverage,
                 "recovery_id": self._recovery_id if self._recovery_id else "",
                 "reason": reason,
@@ -224,12 +239,9 @@ class Simulator:
             len(visited_reachable) / len(self.reachable) if self.reachable else 1.0
         )
 
-    def _traversability_class(self, cell: CellPos) -> str:
-        if not self.grid.is_traversable(cell):
-            return "blocked"
-        cost = self.grid.cost(cell)
-        if cost <= 1.0:
-            return "normal"
-        if cost <= 1.5:
-            return "high_cost"
-        return "cautious"
+    def _record_cost_class(self, cell: CellPos) -> None:
+        cell_cost = self.grid.cost(cell, "cost_2d5")
+        if cell_cost > 1.0:
+            self.metrics.high_cost_cells_entered += 1
+        if self.grid.traversability_class(cell) == "cautious":
+            self.metrics.cautious_cells_entered += 1

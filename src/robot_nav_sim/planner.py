@@ -13,6 +13,7 @@ def manhattan(a: CellPos, b: CellPos) -> int:
 @dataclass
 class AStarPlanner:
     grid: GridMap2D5
+    planner_mode: str = "baseline_2d"
 
     def plan(self, start: CellPos, goal: CellPos) -> list[CellPos]:
         if not self.grid.is_traversable(start) or not self.grid.is_traversable(goal):
@@ -34,7 +35,7 @@ class AStarPlanner:
             for neighbor in self.grid.neighbors4(current):
                 if not self.grid.is_traversable(neighbor):
                     continue
-                new_cost = cost_so_far[current] + self.grid.cost(neighbor)
+                new_cost = cost_so_far[current] + self.grid.cost(neighbor, self.planner_mode)
                 if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
                     cost_so_far[neighbor] = new_cost
                     sequence += 1
