@@ -1,0 +1,18 @@
+{
+  "name": "narrow_passage_room",
+  "width": 34,
+  "height": 22,
+  "start": [2, 2],
+  "features": [
+    {"type": "wall", "rect": [0, 0, 34, 1]},
+    {"type": "wall", "rect": [0, 21, 34, 1]},
+    {"type": "wall", "rect": [0, 0, 1, 22]},
+    {"type": "wall", "rect": [33, 0, 1, 22]},
+    {"type": "hard_obstacle", "rect": [8, 3, 2, 15]},
+    {"type": "hard_obstacle", "rect": [16, 5, 2, 15]},
+    {"type": "hard_obstacle", "rect": [24, 3, 2, 15]},
+    {"type": "carpet", "rect": [2, 15, 5, 4]},
+    {"type": "low_bump", "rect": [10, 10, 6, 1]},
+    {"type": "curtain_soft", "rect": [27, 6, 1, 10]}
+  ]
+}

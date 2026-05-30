@@ -1,0 +1,15 @@
+{
+  "name": "baseline_room",
+  "width": 30,
+  "height": 20,
+  "start": [1, 1],
+  "features": [
+    {"type": "wall", "rect": [0, 0, 30, 1]},
+    {"type": "wall", "rect": [0, 19, 30, 1]},
+    {"type": "wall", "rect": [0, 0, 1, 20]},
+    {"type": "wall", "rect": [29, 0, 1, 20]},
+    {"type": "hard_obstacle", "rect": [10, 5, 3, 8]},
+    {"type": "carpet", "rect": [16, 3, 8, 5]},
+    {"type": "low_bump", "rect": [5, 14, 10, 1]}
+  ]
+}

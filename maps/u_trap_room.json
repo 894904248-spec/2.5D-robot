@@ -1,0 +1,21 @@
+{
+  "name": "u_trap_room",
+  "width": 36,
+  "height": 24,
+  "start": [2, 2],
+  "features": [
+    {"type": "wall", "rect": [0, 0, 36, 1]},
+    {"type": "wall", "rect": [0, 23, 36, 1]},
+    {"type": "wall", "rect": [0, 0, 1, 24]},
+    {"type": "wall", "rect": [35, 0, 1, 24]},
+
+    {"type": "hard_obstacle", "rect": [12, 6, 2, 12]},
+    {"type": "hard_obstacle", "rect": [22, 6, 2, 12]},
+    {"type": "hard_obstacle", "rect": [12, 16, 12, 2]},
+
+    {"type": "carpet", "rect": [4, 4, 6, 5]},
+    {"type": "curtain_soft", "rect": [26, 4, 1, 12]},
+    {"type": "low_bump", "rect": [5, 20, 20, 1]},
+    {"type": "pit", "rect": [28, 17, 3, 3]}
+  ]
+}
