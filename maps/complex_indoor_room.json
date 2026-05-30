@@ -1,0 +1,34 @@
+{
+  "name": "complex_indoor_room",
+  "width": 42,
+  "height": 28,
+  "start": [2, 2],
+  "features": [
+    {"type": "wall", "rect": [0, 0, 42, 1]},
+    {"type": "wall", "rect": [0, 27, 42, 1]},
+    {"type": "wall", "rect": [0, 0, 1, 28]},
+    {"type": "wall", "rect": [41, 0, 1, 28]},
+
+    {"type": "hard_obstacle", "rect": [6, 5, 2, 2]},
+    {"type": "hard_obstacle", "rect": [13, 5, 2, 2]},
+    {"type": "hard_obstacle", "rect": [6, 11, 2, 2]},
+    {"type": "hard_obstacle", "rect": [13, 11, 2, 2]},
+
+    {"type": "hard_obstacle", "rect": [21, 4, 8, 2]},
+    {"type": "hard_obstacle", "rect": [21, 10, 8, 2]},
+    {"type": "hard_obstacle", "rect": [21, 4, 2, 8]},
+    {"type": "hard_obstacle", "rect": [27, 4, 2, 8]},
+
+    {"type": "hard_obstacle", "rect": [10, 17, 2, 8]},
+    {"type": "hard_obstacle", "rect": [20, 17, 2, 8]},
+    {"type": "hard_obstacle", "rect": [10, 23, 12, 2]},
+
+    {"type": "hard_obstacle", "rect": [32, 4, 4, 16]},
+    {"type": "hard_obstacle", "rect": [36, 4, 1, 7]},
+    {"type": "hard_obstacle", "rect": [36, 13, 1, 7]},
+
+    {"type": "carpet", "rect": [2, 16, 7, 7], "traversability_cost": 2.5, "roughness": 0.18},
+    {"type": "low_bump", "rect": [16, 14, 15, 1], "traversability_cost": 2.0, "height": 0.15},
+    {"type": "curtain_soft", "rect": [38, 6, 1, 14], "traversability_cost": 2.0, "roughness": 0.12}
+  ]
+}

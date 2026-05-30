@@ -82,6 +82,14 @@ Each rectangle is `[x, y, width, height]`. Feature `type` maps to the cell seman
 
 Blocked semantic classes are `wall`, `hard_obstacle`, `pit`, `too_high`, and `too_steep`. `carpet`, `low_bump`, and `curtain_soft` remain traversable but have higher costs than normal `floor`.
 
+Available validation maps:
+
+- `maps/baseline_room.json`: simple baseline room with static obstacles and soft-cost regions.
+- `maps/u_trap_room.json`: U-shaped trap / recovery scenario.
+- `maps/narrow_passage_room.json`: narrow-passage coverage scenario.
+- `maps/cost_choice_room.json`: point-to-point route-choice demonstration for `baseline_2d` vs `cost_2d5`.
+- `maps/complex_indoor_room.json`: denser indoor validation scene with furniture blocks, narrow passage, U-shaped/dead-end region, carpet, and cautious areas.
+
 ## Metrics Definition
 
 - `coverage_rate`: visited reachable traversable cells divided by total reachable traversable cells. Blocked cells are not included.
@@ -105,10 +113,14 @@ The simulator records a safe path history and branch candidates around each visi
 
 Each run writes an output directory containing:
 
-- `final_map.png`: final visualization with map semantics, visited cells, path, start, and end.
+- `final_map.png`: main coverage summary with map semantics, visited cells, path, dock/start, final_pose, planner mode, and key metrics.
+- `trajectory_order_map.png`: execution-order view using a step-color gradient and sparse arrows.
+- `recovery_debug_map.png`: recovery-focused view that highlights backtracking and branch-recovery segments.
 - `path_log.csv`: per-step movement log with position, action, target, cell metadata, step cost, cumulative cost, planner mode, coverage, recovery id, and reason.
 
 The terminal also prints the metrics above.
+
+`final_map.png` is the best quick-look artifact. `trajectory_order_map.png` is for understanding when cells were visited. `recovery_debug_map.png` is for checking whether backtracking/recovery events occurred and where. v0.2.3 phase 1 does not generate `trajectory.gif` yet.
 
 ## Run
 
@@ -131,6 +143,13 @@ Run the v0.2 cost-choice comparison:
 ```powershell
 python examples/run_mvp.py --map maps/cost_choice_room.json --output outputs/cost_choice_baseline --planner-mode baseline_2d
 python examples/run_mvp.py --map maps/cost_choice_room.json --output outputs/cost_choice_2d5 --planner-mode cost_2d5
+```
+
+Run the v0.2.2 complex indoor validation:
+
+```powershell
+python examples/run_mvp.py --map maps/complex_indoor_room.json --output outputs/complex_indoor_baseline --planner-mode baseline_2d
+python examples/run_mvp.py --map maps/complex_indoor_room.json --output outputs/complex_indoor_2d5 --planner-mode cost_2d5
 ```
 
 ## Limitations

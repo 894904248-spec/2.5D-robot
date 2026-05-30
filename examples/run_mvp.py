@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from robot_nav_sim import GridMap2D5, Simulator
-from robot_nav_sim.visualization import save_final_map
+from robot_nav_sim.visualization import save_final_map, save_recovery_debug_map, save_trajectory_order_map
 
 
 def parse_args() -> argparse.Namespace:
@@ -28,13 +28,36 @@ def main() -> None:
 
     output_dir = Path(args.output)
     path_log = simulator.write_path_log(output_dir)
-    final_map = save_final_map(grid, result.visited, result.path, output_dir)
+    final_map = save_final_map(
+        grid,
+        result.visited,
+        result.path,
+        output_dir,
+        metrics=result.metrics,
+        planner_mode=args.planner_mode,
+    )
+    trajectory_order_map = save_trajectory_order_map(
+        grid,
+        result.path,
+        output_dir,
+        metrics=result.metrics,
+        planner_mode=args.planner_mode,
+    )
+    recovery_debug_map = save_recovery_debug_map(
+        grid,
+        result.log_rows,
+        output_dir,
+        metrics=result.metrics,
+        planner_mode=args.planner_mode,
+    )
 
     print(f"map_name: {grid.name}")
     print(f"planner_mode: {args.planner_mode}")
     for key, value in result.metrics.as_dict().items():
         print(f"{key}: {value}")
     print(f"final_map: {final_map}")
+    print(f"trajectory_order_map: {trajectory_order_map}")
+    print(f"recovery_debug_map: {recovery_debug_map}")
     print(f"path_log: {path_log}")
 
 

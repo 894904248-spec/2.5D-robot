@@ -45,3 +45,14 @@ def test_baseline_and_cost_modes_differ_on_cost_choice_room() -> None:
 
     assert baseline_path != cost_path
     assert len(baseline_path) < len(cost_path)
+
+
+def test_complex_indoor_room_runs_in_both_modes() -> None:
+    grid = GridMap2D5.from_json(ROOT / "maps" / "complex_indoor_room.json")
+
+    for mode in ("baseline_2d", "cost_2d5"):
+        result = Simulator(grid, planner_mode=mode).run()
+
+        assert result.metrics.collision_count == 0
+        assert result.metrics.coverage_rate >= 0.85
+        assert all(grid.is_traversable(cell) for cell in result.path)

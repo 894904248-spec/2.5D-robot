@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 
 from robot_nav_sim import GridMap2D5, SimulationMetrics, Simulator
-from robot_nav_sim.visualization import save_final_map
+from robot_nav_sim.visualization import save_final_map, save_recovery_debug_map, save_trajectory_order_map
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -44,10 +44,53 @@ def test_visualization_creates_png(tmp_path: Path) -> None:
     simulator = Simulator(grid)
     result = simulator.run()
 
-    image_path = save_final_map(grid, result.visited, result.path, tmp_path)
+    image_path = save_final_map(
+        grid,
+        result.visited,
+        result.path,
+        tmp_path,
+        metrics=result.metrics,
+        planner_mode=simulator.planner_mode,
+    )
 
     assert image_path.exists()
     assert image_path.name == "final_map.png"
+    assert image_path.stat().st_size > 0
+
+
+def test_trajectory_order_map_creates_png(tmp_path: Path) -> None:
+    grid = GridMap2D5.from_json(ROOT / "maps" / "baseline_room.json")
+    simulator = Simulator(grid)
+    result = simulator.run()
+
+    image_path = save_trajectory_order_map(
+        grid,
+        result.path,
+        tmp_path,
+        metrics=result.metrics,
+        planner_mode=simulator.planner_mode,
+    )
+
+    assert image_path.exists()
+    assert image_path.name == "trajectory_order_map.png"
+    assert image_path.stat().st_size > 0
+
+
+def test_recovery_debug_map_creates_png(tmp_path: Path) -> None:
+    grid = GridMap2D5.from_json(ROOT / "maps" / "u_trap_room.json")
+    simulator = Simulator(grid)
+    result = simulator.run()
+
+    image_path = save_recovery_debug_map(
+        grid,
+        result.log_rows,
+        tmp_path,
+        metrics=result.metrics,
+        planner_mode=simulator.planner_mode,
+    )
+
+    assert image_path.exists()
+    assert image_path.name == "recovery_debug_map.png"
     assert image_path.stat().st_size > 0
 
 
